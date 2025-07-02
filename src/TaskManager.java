@@ -1,14 +1,14 @@
 import java.util.ArrayList;
 
 public class TaskManager {
-    private ArrayList<String> tasks;
+    private ArrayList<CompletedBox> tasks;
 
     public TaskManager(){
         tasks = new ArrayList<>();
     }
 
-    public void addTask(String task){
-        tasks.add(task);
+    public void addTask(String taskText){
+        tasks.add(new CompletedBox(taskText));
     }
 
     public void removeTask(int index){
@@ -17,7 +17,12 @@ public class TaskManager {
         }
     }
 
-    public ArrayList<String> getTasks(){
-        return tasks;
+    public CompletedBox getTask(int index){
+        return (index >= 0 && index < tasks.size()) ? tasks.get(index) : null;
+    }
+
+    public ArrayList<CompletedBox> getTasks() {
+            return tasks;
     }
 }
+
