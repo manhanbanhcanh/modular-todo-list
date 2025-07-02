@@ -7,16 +7,18 @@
 # modular-todo-list
 
 ### About The Project
-This project is something me and my friend do while learning Java application building, that's all. 🥀
+This project is something I made for fun and learning about Swing. 🥀
 
 ### Roadmap
-- [x]  Create a working task manager and list
-- [x]  Create a simple and functioning GUI
-- [ ]  Refurnish GUI
-   - [ ]  Making a pleasing looking UI
-   - [ ]  Improve some UX elements
+- [x] Create a working task manager and list
+- [x] Create a simple and functioning GUI
+- [ ] Refurnish GUI
+   - [ ] Add box borders
+   - [ ] Add theme
 - [ ]  Functionality
-   - [ ]  Add some new features (will be updated in this README.md if we ever think of something)
+   - [ ] Mark tasks for completion
+   - [ ] Add some customization settings
+   - [ ] Add markdown text syntaxes
 - [ ] Debugging
 
 ---
