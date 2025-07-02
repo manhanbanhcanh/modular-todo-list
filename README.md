@@ -7,7 +7,7 @@
 # modular-todo-list
 
 ### About The Project
-This project is something I made for fun and learning about Swing. 🥀
+This project is something I made for fun and learning about Swing. (With a lot of help from AI to assist me when I'm wrong 🥀)
 
 ### Roadmap
 - [x] Create a working task manager and list
@@ -16,7 +16,7 @@ This project is something I made for fun and learning about Swing. 🥀
    - [ ] Add box borders
    - [ ] Add theme
 - [ ]  Functionality
-   - [ ] Mark tasks for completion
+   - [x] Mark tasks for completion
    - [ ] Add some customization settings
    - [ ] Add markdown text syntaxes
 - [ ] Debugging
