@@ -7,17 +7,19 @@
 # modular-todo-list
 
 ### About The Project
-This project is something I made for fun and learning about Swing. (With a lot of help from AI to assist me when I'm wrong 🥀)
+This project is something I made for fun and learning about Swing. (With a lot of help from AI to help me when I'm wrong 🥀)
 
 ### Roadmap
 - [x] Create a working task manager and list
 - [x] Create a simple and functioning GUI
 - [ ] Refurnish GUI
-   - [ ] Add box borders
-   - [ ] Add theme
+   - [ ] UI redo (e.g., eye candies)
+   - [ ] Add themes (dark theme, custom coloring theme)
 - [ ]  Functionality
    - [x] Mark tasks for completion
-   - [ ] Add some customization settings
+   - [ ] Add tasks priority (maybe task due date)
+   - [ ] Add filtering
+   - [ ] Save and load tasks to a file
    - [ ] Add markdown text syntaxes
 - [ ] Debugging
 
