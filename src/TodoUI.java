@@ -154,10 +154,13 @@ public class TodoUI extends JFrame {
         }
 
         private String formatTaskText(CompletedBox task) {
+            //small html escape safety measure
+            String text = escapeHTML(task.getDescription());
+
             if (task.isCompleted()) {
-                return String.format("<html><strike>" + task.getDescription() + "</strike></html>");
+                return String.format("<html><strike>" + text + "</strike></html>");
             } else {
-                return task.getDescription();
+                return text;
             }
         }
 
