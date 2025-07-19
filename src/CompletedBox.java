@@ -19,6 +19,10 @@ public class CompletedBox {
         completed = !completed;
     }
 
+    public void toggleCompleted(){
+        this.completed = !this.completed;
+    }
+
     @Override
     public String toString() {
         return description;

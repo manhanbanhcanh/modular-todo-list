@@ -50,7 +50,13 @@ public class TodoUI extends JFrame {
         taskList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleTaskCompletion(e);
+                int index = taskList.locationToIndex(e.getPoint());
+                if (index != -1) {
+                    CompletedBox task = listModel.get(index);
+                    task.toggleCompleted();
+                    listModel.set(index, task);
+                    taskList.repaint();
+                }
             }
         });
 
@@ -77,16 +83,18 @@ public class TodoUI extends JFrame {
         taskList.setFont(appFont);
     }
 
-    private void handleTaskCompletion(MouseEvent e) {
-        int index = taskList.locationToIndex(e.getPoint());
-        if (index != -1) {
-            CompletedBox task = taskManager.getTask(index);
-            if (task != null) {
-                task.setCompleted();
-                taskList.repaint();
-            }
-        }
-    }
+
+//    completely unnecessary for some reason after i fixed strikethrough
+//    private void handleTaskCompletion(MouseEvent e) {
+//        int index = taskList.locationToIndex(e.getPoint());
+//        if (index != -1) {
+//            CompletedBox task = taskManager.getTask(index);
+//            if (task != null) {
+//                task.setCompleted();
+//                taskList.repaint();
+//            }
+//        }
+//    }
 
     private JPanel createInputPanel() {
         JPanel inputPanel = new JPanel();
@@ -140,6 +148,9 @@ public class TodoUI extends JFrame {
             //use HTML for strikethrough
             setText(formatTaskText(task));
             setSelected(task.isCompleted());
+            setOpaque(true);
+            setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
             //color
             configureAppearance(list, isSelected);
             return this;
@@ -149,16 +160,14 @@ public class TodoUI extends JFrame {
             //small HTML escape safety measure
             String text = escapeHTML(task.getDescription());
 
-            if (task.isCompleted()) {
-                return String.format("<html><strike>" + text + "</strike></html>");
-            } else {
-                return text;
-            }
+            return task.isCompleted()
+                    ? "<html><strike>" + text + "</strike></html>"
+                    : text;
         }
 
         private void configureAppearance(JList<?> list, boolean isSelected) {
-            setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
-            setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+            setBackground(isSelected ? list.getSelectionBackground() : Color.WHITE);
+            setForeground(isSelected ? list.getSelectionForeground() : Color.BLACK);
         }
 
         private String escapeHTML(String text) { //safety escape
