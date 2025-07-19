@@ -9,6 +9,7 @@ public class CompletedBox {
         this.title = tilte;
         this.description = description;
         this.completed = false;
+        System.out.println("Complete box created");
     }
 
     public String getTitle() {return title;}

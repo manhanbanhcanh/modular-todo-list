@@ -5,20 +5,19 @@ public class TaskManager {
 
     public TaskManager(){
         tasks = new ArrayList<>();
+        System.out.println("Task manager created");
     }
 
     public void addTask(String title, String description){
         tasks.add(new CompletedBox(title, description));
+        System.out.println("Task added");
     }
 
     public void removeTask(int index){
         if (index >= 0 && index < tasks.size()){
             tasks.remove(index);
+            System.out.println("Task removed");
         }
-    }
-
-    public CompletedBox getTask(int index){
-        return (index >= 0 && index < tasks.size()) ? tasks.get(index) : null;
     }
 
     public ArrayList<CompletedBox> getTasks() {

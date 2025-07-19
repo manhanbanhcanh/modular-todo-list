@@ -35,6 +35,7 @@ public class TodoUI extends JFrame {
         setupLayout();
 
         setVisible(true);
+        System.out.println("UI created");
     }
 
     private void initComponents() {
@@ -52,22 +53,10 @@ public class TodoUI extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int index = taskList.locationToIndex(e.getPoint());
-                if (index != -1) {
-                    Rectangle bounds = taskList.getCellBounds(index, index);
-
-                    int checkBoxX = bounds.x +5;
-                    int checkBoxY = bounds.y + 5;
-                    int checkBoxWidth = 20;
-                    int checkBoxHeight = 20;
-
-                    Rectangle checkBoxArea = new Rectangle(checkBoxX, checkBoxY, checkBoxWidth, checkBoxHeight);
-
-                    if (checkBoxArea.contains(e.getPoint())) {
+                if (index != -1 && getCheckBoxArea(index).contains(e.getPoint())) {
                         CompletedBox task = listModel.getElementAt(index);
                         task.toggleCompleted();
-                        taskList.repaint(checkBoxArea);
-                    }
-
+                        taskList.repaint(getCheckBoxArea(index));
                 }
             }
         });
@@ -77,43 +66,27 @@ public class TodoUI extends JFrame {
            public void mouseMoved(MouseEvent e) {
                int index = taskList.locationToIndex(e.getPoint());
                if (index != -1) {
-                   Rectangle bounds = taskList.getCellBounds(index, index);
-                   int checkBoxX = bounds.x + 5;
-                   int checkBoxY = bounds.y + 5;
-                   int checkBoxWidth = 20;
-                   int checkBoxHeight = 20;
-
-                   Rectangle checkboxArea = new Rectangle(checkBoxX, checkBoxY, checkBoxWidth, checkBoxHeight);
-
-                   if (checkboxArea.contains(e.getPoint())) {
-                       taskList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                   } else {
-                       taskList.setCursor(Cursor.getDefaultCursor());
-                   }
-
+                   Cursor cursor = getCheckBoxArea(index).contains(e.getPoint()) ?
+                           Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) :
+                           Cursor.getDefaultCursor();
+                   taskList.setCursor(cursor);
+               } else {
+                    taskList.setCursor(Cursor.getDefaultCursor());
                }
             }
         });
 
-        addTaskButton = new roundedButton(AddButtonText,20);
-        addTaskButton.setBackground(new Color(100,149,237));
+        addTaskButton = new JButton(AddButtonText);
+        addTaskButton.setBackground(new Color(0, 196, 255));
 
-        removeTaskButton = new roundedButton(RemoveButtonText,20);
+        removeTaskButton = new JButton(RemoveButtonText);
         removeTaskButton.setBackground(new Color(232,66,69));
-
-        addTaskButton.setFont(appFont);
-        addTaskButton.setForeground(Color.WHITE);
-        addTaskButton.setFocusPainted(false);
-
-        removeTaskButton.setFont(appFont);
-        removeTaskButton.setForeground(Color.WHITE);
-        removeTaskButton.setFocusPainted(false);
 
         taskList.setBackground(Color.WHITE);
         taskList.setFont(appFont);
 
         //right side table
-        detailTitleLabel = new JLabel("Select a task to view in details");
+        detailTitleLabel = new JLabel("");
         detailTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         detailDescriptionArea = new JTextArea();
@@ -122,10 +95,15 @@ public class TodoUI extends JFrame {
         detailDescriptionArea.setWrapStyleWord(true);
         detailDescriptionArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-//        JPanel detailPanel = new JPanel(new BorderLayout(10,10));
-//        detailPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-//        detailPanel.add(detailTitleLabel, BorderLayout.NORTH);
-//        detailPanel.add(new JScrollPane(detailDescriptionArea), BorderLayout.CENTER);
+        System.out.println("Components initialized");
+    }
+
+    //getting check box area
+    private Rectangle getCheckBoxArea(int index) {
+        Rectangle bounds = taskList.getCellBounds(index, index);
+        int padding = 5;
+        int size = 20;
+        return new Rectangle(bounds.x + padding, bounds.y + padding, size, size);
     }
 
     //construct detail panel
@@ -161,6 +139,8 @@ public class TodoUI extends JFrame {
 
         mainPanel.add(splitPane, BorderLayout.CENTER);
         setContentPane(mainPanel);
+
+        System.out.println("Layout setup");
     }
 
     private void setupListener() {
@@ -181,11 +161,13 @@ public class TodoUI extends JFrame {
                     detailTitleLabel.setText(selectedTask.getTitle());
                     detailDescriptionArea.setText(selectedTask.getDescription());
                 } else {
-                    detailTitleLabel.setText("Select a task");
+                    detailTitleLabel.setText("Select a task to view in details");
                     detailDescriptionArea.setText("");
                 }
             }
         });
+
+        System.out.println("Listeners setup");
     }
 
     private void refreshTaskList() {
@@ -194,81 +176,103 @@ public class TodoUI extends JFrame {
         for (CompletedBox task : tasks) {
             listModel.addElement(task);
         }
+
+        System.out.println("Task list refreshed");
     }
 
     private void openTaskDialog() {
-        JDialog dialog = new JDialog(this, "Add new task", true);
-        dialog.setSize(300, 450);
-        dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout());
+            JDialog dialog = new JDialog(this, "Add new task", true);
+            dialog.setSize(350, 300);
+            dialog.setLocationRelativeTo(this);
+            dialog.setLayout(new GridBagLayout());
 
-        //title and description field
-        JTextField titleField = new JTextField();
-        JTextArea descriptionField = new JTextArea();
-        descriptionField.setLineWrap(true);
-        descriptionField.setWrapStyleWord(true);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.NORTHWEST;
 
-        JPanel inputPanel = new JPanel(new GridLayout(4, 1,5,5));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        inputPanel.add(new JLabel("Title:"));
-        inputPanel.add(titleField);
-        inputPanel.add(new JLabel("Description:"));
-        inputPanel.add(descriptionField);
+            // title part
+            JLabel titleLabel = new JLabel("Title:");
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.weightx = 0;
+            dialog.add(titleLabel, gbc);
 
-        System.out.println("Dialog opened and loaded");
+            JTextField titleField = new JTextField();
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            gbc.weightx = 1;
+            dialog.add(titleField, gbc);
 
-        //submit button
-        JButton submitButton = new roundedButton("Submit", 20);
-        submitButton.addActionListener(e -> {
-            String title = titleField.getText().trim();
-            String description = descriptionField.getText().trim();
-            if (!title.isEmpty()) {
-                taskManager.addTask(title, description);
-                refreshTaskList();
-                dialog.dispose();
-            }
-        });
+            // description part
+            JLabel descLabel = new JLabel("Description:");
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.weightx = 0;
+            dialog.add(descLabel, gbc);
 
+            JTextArea descriptionArea = new JTextArea(5, 20);
+            descriptionArea.setLineWrap(true);
+            descriptionArea.setWrapStyleWord(true);
+            JScrollPane scrollPane = new JScrollPane(descriptionArea);
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.weightx = 1;
+            gbc.weighty = 1;
+            gbc.fill = GridBagConstraints.BOTH;
+            dialog.add(scrollPane, gbc);
 
-        dialog.add(inputPanel, BorderLayout.CENTER);
-        dialog.add(submitButton, BorderLayout.SOUTH);
-        dialog.setVisible(true);
-    }
+            // submit button
+            JButton submitButton = new JButton("Submit");
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            gbc.weighty = 0;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            dialog.add(submitButton, gbc);
+
+            // action listener
+            submitButton.addActionListener(e -> {
+                String title = titleField.getText().trim();
+                String description = descriptionArea.getText().trim();
+                if (!title.isEmpty()) {
+                    taskManager.addTask(title, description);
+                    refreshTaskList();
+                    dialog.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "Please enter a title.");
+                }
+            });
+
+            submitButton.setBackground(new Color(100, 237, 107)); // Cornflower Blue
+            submitButton.setForeground(Color.BLACK);
+
+            dialog.setVisible(true);
+
+            System.out.println("Task dialog opened");
+        }
+
 
     private static class TaskCellRenderer extends JCheckBox implements ListCellRenderer<CompletedBox> {
-
         @Override
         public Component getListCellRendererComponent(JList<? extends CompletedBox> list,
                                                       CompletedBox task, int index, boolean isSelected, boolean cellHasFocus) {
-            //use HTML for strikethrough
-            setText(formatTaskText(task));
+            setText(task.getTitle());
             setSelected(task.isCompleted());
             setOpaque(true);
             setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-            //color
-            configureAppearance(list, isSelected);
+            configureAppearance(task, isSelected);
             return this;
         }
 
-        private String formatTaskText(CompletedBox task) {
-            //small HTML escape safety measure
-            String text = escapeHTML(task.getTitle());
+        private void configureAppearance(CompletedBox task, boolean isSelected) {
+            if (isSelected) {
+                setBackground(new Color(0xCCE5FF)); // light blue background for selected
+            } else {
+                setBackground(Color.WHITE);
+            }
 
-            return task.isCompleted()
-                    ? "<html><strike>" + text + "</strike></html>"
-                    : text;
-        }
-
-        private void configureAppearance(JList<?> list, boolean isSelected) {
-            setBackground(isSelected ? list.getSelectionBackground() : Color.WHITE);
-            setForeground(isSelected ? list.getSelectionForeground() : Color.BLACK);
-        }
-
-        private String escapeHTML(String text) { //safety escape
-            return text.replace("&", "&amp;")
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;");
+            setForeground(task.isCompleted() ? new Color(0, 128, 0) : Color.BLACK);
         }
     }
 }
