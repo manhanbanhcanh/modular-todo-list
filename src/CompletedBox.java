@@ -1,5 +1,5 @@
 public class CompletedBox {
-    private String description;
+    private final String description;
     private boolean completed;
 
     public CompletedBox(String description) {

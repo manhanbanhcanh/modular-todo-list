@@ -3,14 +3,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+
+
 public class TodoUI extends JFrame {
     private static final int WINDOW_WIDTH = 1280;
     private static final int WINDOW_HEIGHT = 720;
     private static final int INPUT_FIELD_SIZE = 20;
     private static final String WINDOW_TITLE = "Modular To-Do List";
     private static final String TASK_LABEL = "Task:";
-    private static final String ADD_BUTTON_TEXT = "Add";
-    private static final String REMOVE_BUTTON_TEXT = "Remove";
+    private static final String AddButtonText = "Add";
+    private static final String RemoveButtonText = "Remove";
+
+
 
     private JPanel mainPanel;
     private JTextField taskInputField;
@@ -35,7 +39,9 @@ public class TodoUI extends JFrame {
 
     private void initComponents() {
 
+        //UI styling
         Font appFont = new Font("Segoe UI", Font.PLAIN, 14);
+
         mainPanel = new JPanel(new BorderLayout());
         taskManager = new TaskManager();
         listModel = new DefaultListModel<>();
@@ -49,40 +55,26 @@ public class TodoUI extends JFrame {
         });
 
         taskInputField = new JTextField(INPUT_FIELD_SIZE);
-        addTaskButton = new JButton(ADD_BUTTON_TEXT);
-        removeTaskButton = new JButton(REMOVE_BUTTON_TEXT);
+
+        addTaskButton = new roundedButton(AddButtonText,20);
+        addTaskButton.setBackground(new Color(100,149,237));
+
+        removeTaskButton = new roundedButton(RemoveButtonText,20);
+        removeTaskButton.setBackground(new Color(232,66,69));
 
         taskList.setFont(appFont);
-        taskInputField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
         taskInputField.setBackground(new Color(245,245,245));
 
         addTaskButton.setFont(appFont);
-        addTaskButton.setBackground(new Color(100,149,237));
         addTaskButton.setForeground(Color.WHITE);
         addTaskButton.setFocusPainted(false);
 
         removeTaskButton.setFont(appFont);
-        removeTaskButton.setBackground(new Color(232,66,69));
         removeTaskButton.setForeground(Color.WHITE);
         removeTaskButton.setFocusPainted(false);
 
         taskList.setBackground(Color.WHITE);
         taskList.setFont(appFont);
-
-        //rounded border thing
-        taskInputField.setBorder(new RoundedBorder(10));
-        addTaskButton.setBorder(new RoundedBorder(10));
-        removeTaskButton.setBorder(new RoundedBorder(10));
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); // Native look
-             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); // Optional Nimbus
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void handleTaskCompletion(MouseEvent e) {
@@ -145,7 +137,7 @@ public class TodoUI extends JFrame {
         @Override
         public Component getListCellRendererComponent(JList<? extends CompletedBox> list,
                                                       CompletedBox task, int index, boolean isSelected, boolean cellHasFocus) {
-            //use html for strikethrough
+            //use HTML for strikethrough
             setText(formatTaskText(task));
             setSelected(task.isCompleted());
             //color
@@ -154,7 +146,7 @@ public class TodoUI extends JFrame {
         }
 
         private String formatTaskText(CompletedBox task) {
-            //small html escape safety measure
+            //small HTML escape safety measure
             String text = escapeHTML(task.getDescription());
 
             if (task.isCompleted()) {
