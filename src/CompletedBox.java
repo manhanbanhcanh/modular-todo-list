@@ -1,22 +1,21 @@
 public class CompletedBox {
+
+    private final String title;
     private final String description;
+
     private boolean completed;
 
-    public CompletedBox(String description) {
+    public CompletedBox(String tilte, String description) {
+        this.title = tilte;
         this.description = description;
         this.completed = false;
     }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getTitle() {return title;}
+    public String getDescription() {return description;}
 
     public boolean isCompleted() {
         return completed;
-    }
-
-    public void setCompleted() {
-        completed = !completed;
     }
 
     public void toggleCompleted(){

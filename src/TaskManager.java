@@ -7,8 +7,8 @@ public class TaskManager {
         tasks = new ArrayList<>();
     }
 
-    public void addTask(String taskText){
-        tasks.add(new CompletedBox(taskText));
+    public void addTask(String title, String description){
+        tasks.add(new CompletedBox(title, description));
     }
 
     public void removeTask(int index){
