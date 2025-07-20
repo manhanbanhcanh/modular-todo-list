@@ -158,8 +158,8 @@ public class TodoUI extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 CompletedBox selectedTask = taskList.getSelectedValue();
                 if (selectedTask != null) {
-                    detailTitleLabel.setText(selectedTask.getTitle());
-                    detailDescriptionArea.setText(selectedTask.getDescription());
+                    detailTitleLabel.setText("<html>" + markdownToHtml(escapeHTML(selectedTask.getTitle())) + "</html>");
+                    detailDescriptionArea.setText(markdownToPlainText(selectedTask.getDescription()));
                 } else {
                     detailTitleLabel.setText("Select a task to view in details");
                     detailDescriptionArea.setText("");
@@ -168,6 +168,23 @@ public class TodoUI extends JFrame {
         });
 
         System.out.println("Listeners setup");
+    }
+
+    private String markdownToHtml(String text) {
+        text = text.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>"); // bold
+        text = text.replaceAll("\\*(.*?)\\*", "<i>$1</i>");       // italic
+        return text;
+    }
+
+    private String markdownToPlainText(String text) {
+        return text.replaceAll("\\*\\*(.*?)\\*\\*", "$1")
+                .replaceAll("\\*(.*?)\\*", "$1"); // remove markdown for text area
+    }
+
+    private String escapeHTML(String text) {
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     private void refreshTaskList() {
@@ -253,10 +270,16 @@ public class TodoUI extends JFrame {
 
 
     private static class TaskCellRenderer extends JCheckBox implements ListCellRenderer<CompletedBox> {
+
         @Override
         public Component getListCellRendererComponent(JList<? extends CompletedBox> list,
                                                       CompletedBox task, int index, boolean isSelected, boolean cellHasFocus) {
-            setText(task.getTitle());
+
+            //markdown text to html
+            String htmlText = markdownToHtml(escapeHTML(task.getTitle()));
+            setText("<html>" + htmlText + "</html>");
+
+            //appearance
             setSelected(task.isCompleted());
             setOpaque(true);
             setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -273,6 +296,18 @@ public class TodoUI extends JFrame {
             }
 
             setForeground(task.isCompleted() ? new Color(0, 128, 0) : Color.BLACK);
+        }
+
+        private String markdownToHtml(String text) {
+            text = text.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>"); // bold
+            text = text.replaceAll("\\*(.*?)\\*", "<i>$1</i>");       // italic
+            return text;
+        }
+
+        private String escapeHTML(String text) {
+            return text.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;");
         }
     }
 }
