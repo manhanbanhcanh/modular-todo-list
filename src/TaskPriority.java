@@ -1,4 +1,5 @@
 import java.awt.*;
+
 public enum TaskPriority {
     LOW("Low", new Color(0,128,0)),
     MEDIUM("Medium", new Color(255,165,0)),
