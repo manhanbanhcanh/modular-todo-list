@@ -20,6 +20,7 @@ public class TodoUI extends JFrame {
     private JButton removeTaskButton;
     private JList<CompletedBox> taskList;
     private JLabel detailTitleLabel;
+    private JLabel detailPriorityLabel;
     private JTextArea detailDescriptionArea;
     private DefaultListModel<CompletedBox> listModel;
     private TaskManager taskManager;
@@ -88,6 +89,8 @@ public class TodoUI extends JFrame {
         //right side table
         detailTitleLabel = new JLabel("");
         detailTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        detailPriorityLabel = new JLabel("Priority: -");
+        detailPriorityLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
         detailDescriptionArea = new JTextArea();
         detailDescriptionArea.setEditable(false);
@@ -110,7 +113,14 @@ public class TodoUI extends JFrame {
     private JPanel createDetailPanel() {
         JPanel detailPanel = new JPanel(new BorderLayout(10, 10));
         detailPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        detailPanel.add(detailTitleLabel, BorderLayout.NORTH);
+
+        JPanel header = new JPanel();
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+        header.add(detailTitleLabel);
+        header.add(Box.createVerticalStrut(6));
+        header.add(detailPriorityLabel);
+
+        detailPanel.add(header, BorderLayout.NORTH);
         detailPanel.add(new JScrollPane(detailDescriptionArea), BorderLayout.CENTER);
         return detailPanel;
     }
@@ -160,9 +170,17 @@ public class TodoUI extends JFrame {
                 if (selectedTask != null) {
                     detailTitleLabel.setText("<html>" + markdownToHtml(escapeHTML(selectedTask.getTitle())) + "</html>");
                     detailDescriptionArea.setText(markdownToPlainText(selectedTask.getDescription()));
+
+                    detailPriorityLabel.setText("Priority: " + selectedTask.getPriority());
+                    detailPriorityLabel.setForeground(
+                            selectedTask.isCompleted() ? Color.GRAY : selectedTask.getPriority().getColor()
+                    );
+
                 } else {
-                    detailTitleLabel.setText("Select a task to view in details");
-                    detailDescriptionArea.setText("");
+                    detailTitleLabel.setText("");
+                    detailDescriptionArea.setText("Select a task to view in details");
+                    detailPriorityLabel.setText("Priority: -");
+                    detailPriorityLabel.setForeground(Color.BLACK);
                 }
             }
         });
@@ -239,10 +257,26 @@ public class TodoUI extends JFrame {
             gbc.fill = GridBagConstraints.BOTH;
             dialog.add(scrollPane, gbc);
 
+            //prio part
+            JLabel prioLabel = new JLabel("Priority:");
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.weightx = 0;
+            gbc.weighty = 0;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            dialog.add(prioLabel, gbc);
+
+            JComboBox<TaskPriority> priorityComboBox = new JComboBox<>(TaskPriority.values());
+            priorityComboBox.setSelectedItem(TaskPriority.MEDIUM);
+            gbc.gridx = 1;
+            gbc.gridy = 2;
+            gbc.weightx = 1;
+            dialog.add(priorityComboBox, gbc);;
+
             // submit button
             JButton submitButton = new JButton("Submit");
             gbc.gridx = 1;
-            gbc.gridy = 2;
+            gbc.gridy = 3;
             gbc.weighty = 0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             dialog.add(submitButton, gbc);
@@ -251,12 +285,12 @@ public class TodoUI extends JFrame {
             submitButton.addActionListener(e -> {
                 String title = titleField.getText().trim();
                 String description = descriptionArea.getText().trim();
+                TaskPriority priority = (TaskPriority) priorityComboBox.getSelectedItem();
+
                 if (!title.isEmpty()) {
-                    taskManager.addTask(title, description);
-                    refreshTaskList();
+                    CompletedBox newTask = new CompletedBox(title, description, priority);
+                    listModel.addElement(newTask);
                     dialog.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(dialog, "Please enter a title.");
                 }
             });
 
@@ -295,8 +329,13 @@ public class TodoUI extends JFrame {
                 setBackground(Color.WHITE);
             }
 
-            setForeground(task.isCompleted() ? new Color(0, 128, 0) : Color.BLACK);
+            if(task.isCompleted()){
+                setForeground(Color.GRAY);
+            } else {
+                setForeground(task.getPriority().getColor());
+            }
         }
+
 
         private String markdownToHtml(String text) {
             text = text.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>"); // bold
