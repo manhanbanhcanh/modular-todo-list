@@ -17,7 +17,7 @@ This project is something I made for fun and learning about Swing. (With a lot o
    - [ ] Add themes (dark theme, custom coloring theme)
 - [ ]  Functionality
    - [x] Mark tasks for completion
-   - [ ] Add tasks priority (maybe task due date)
+   - [x] Add tasks priority (maybe task due date)
    - [ ] Add filtering
    - [ ] Save and load tasks to a file
    - [ ] Add markdown text syntaxes
